@@ -56,23 +56,67 @@ write.table(agg.stripped, file="../aldex_analysis/reads.txt", quote=F, sep="\t")
 # On the agg.stripped... You need to remove the a set and generate 0's into it
 # Introduce artificial sparsity to ONE condition
 # Last 500 features(genes) of samples in condition B will be "sparse" relative to condition A
-# 
 
+
+# reads_B_500_0.txt
 n.samples.adj <- n.samples - 5 
 agg.500 <- agg.stripped
 agg.500[(n.samples.adj-500):n.samples.adj,11:20] <- 0
 write.table(agg.500, file="../aldex_analysis/reads_B_500_0.txt",quote=F,sep="\t")
 
+# reads_A_500_0.txt
+agg.500.A.0 <- agg.stripped
+agg.500.A.0[(n.samples.adj-500):n.samples.adj,1:10] <- 0
+write.table(agg.500.A.0, file="../aldex_analysis/reads_A_500_0.txt",quote=F,sep="\t")
+
+
+
+# reads_A_500_MIN.txt
 agg.500.A <- agg.500
 agg.500.A[(n.samples.adj-500):n.samples.adj,1:10] <- (agg.500.A[(n.samples.adj-500):n.samples.adj,1:10]/100)
 agg.500.A <- ceiling(agg.500.A)
-write.table(agg.500.A, file="../aldex_analysis/reads_A_500_0.txt",quote=F,sep="\t")
+write.table(agg.500.A, file="../aldex_analysis/reads_A_500_MIN.txt",quote=F,sep="\t")
 
 # reads_B_500_MIN.txt
 agg.500.B.min <- agg.stripped
 agg.500.B.min[(n.samples.adj-500):n.samples.adj,11:20] <- (agg.500.B.min[(n.samples.adj-500):n.samples.adj,11:20]/100)
 agg.500.B.min <- ceiling(agg.500.B.min)
 write.table(agg.500.B.min, file="../aldex_analysis/reads_B_500_MIN.txt",quote=F,sep="\t")
+
+
+
+# reads_B_500_ALT.txt
+agg.500.B.alt <- agg.stripped
+for (i in seq(11,20,2))
+{
+	agg.500.B.alt[(n.samples.adj-500):n.samples.adj,i] <- agg.500.B.alt[(n.samples.adj-500):n.samples.adj,i] / 1000
+}
+agg.500.B.alt <- round(agg.500.B.alt, digits = 0)
+write.table(agg.500.B.alt, file="../aldex_analysis/reads_B_500_ALT.txt",quote=F,sep="\t")
+
+# reads_A_500_ALT.txt
+agg.500.A.alt <- agg.stripped
+for (i in seq(1,10,2))
+{
+	agg.500.A.alt[(n.samples.adj-500):n.samples.adj,i] <- agg.500.A.alt[(n.samples.adj-500):n.samples.adj,i] / 1000
+}
+agg.500.A.alt <- round(agg.500.A.alt, digits = 0)
+write.table(agg.500.A.alt, file="../aldex_analysis/reads_A_500_ALT.txt",quote=F,sep="\t")
+
+
+
+# reads_AB_500_ALT.txt
+agg.500.AB.alt <- agg.stripped
+for (i in seq(1,20,2))
+{
+	agg.500.AB.alt[(n.samples.adj-500):n.samples.adj,i] <- agg.500.AB.alt[(n.samples.adj-500):n.samples.adj,i] / 1000
+}
+agg.500.AB.alt <- round(agg.500.AB.alt, digits = 0)
+write.table(agg.500.AB.alt, file="../aldex_analysis/reads_AB_500_ALT.txt",quote=F,sep="\t")
+
+
+
+
 
 
 # Generate the Meta Table for analysis with other tools 

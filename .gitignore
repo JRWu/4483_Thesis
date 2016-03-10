@@ -2,4 +2,4 @@
 /index
 index/*
 *.Rout
-
+.DS_Store

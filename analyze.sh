@@ -20,7 +20,14 @@
 Rscript --vanilla Analyze.R reads # replace reads.txt with your filename
 Rscript --vanilla Analyze.R reads_A_500_0
 Rscript --vanilla Analyze.R reads_B_500_0
+
+Rscript --vanilla Analyze.R reads_A_500_MIN
 Rscript --vanilla Analyze.R reads_B_500_MIN
+
+Rscript --vanilla Analyze.R reads_A_500_ALT
+Rscript --vanilla Analyze.R reads_B_500_ALT
+
+Rscript --vanilla Analyze.R reads_AB_500_ALT
 
 ./fasta_to_fq.sh 
 ./mapping.sh

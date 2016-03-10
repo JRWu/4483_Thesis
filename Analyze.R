@@ -158,6 +158,7 @@ rare.cex=0.2
 #Determine the "different features"
 x <- x.all.o
 called <- x$we.eBH <= cutoff
+ogcalled <- called
 og.called <- as.data.frame(called)
 og.names <- which(og.called$called == TRUE)
 og.names <- as.data.frame(og.names)
@@ -165,6 +166,7 @@ og.ncalled <- length(og.names)
 
 x <- x.all.z
 called <- x$we.eBH <= cutoff
+zrcalled <- called
 zr.called <- as.data.frame(called)
 zr.names <- which(zr.called$called == TRUE)
 zr.names <- as.data.frame(zr.names)
@@ -183,7 +185,6 @@ abline(0,1, col=thres.line.col, lty=2, lwd=thres.lwd)
 abline(0,-1, col=thres.line.col, lty=2, lwd=thres.lwd)
 points(x$diff.win[zo.diff], x$diff.btw[zo.diff], col="blue", pch=called.pch, cex=called.cex)
 abline(0,0)
-
 dev.off()
 
 x <- x.all.o
@@ -196,6 +197,27 @@ abline(0,1, col=thres.line.col, lty=2, lwd=thres.lwd)
 abline(0,-1, col=thres.line.col, lty=2, lwd=thres.lwd)
 abline(0,0)
 dev.off()
+
+
+# MA Plots ZERO
+x <- x.all.z
+png (paste(created.dir,"MA_Plot_Zero.png", sep=""))
+plot(x$rab.all, x$diff.btw, xlab=expression( "Median" ~~ Log[2] ~~ "relative abundance" ), ylab=expression( "Median" ~~ Log[2] ~~ "btw-Condition diff" ), col=all.col, pch=all.pch, cex=all.cex)
+points(x$rab.all[x$rab.all < rare], x$diff.btw[x$rab.all < rare], col=rare.col, pch=rare.pch, cex=rare.cex)
+points(x$rab.all[zrcalled], x$diff.btw[zrcalled],  col=called.col, pch=called.pch, cex=called.cex)
+dev.off()
+
+# MA Plots ORIGINAL
+x <- x.all.o
+png (paste(created.dir,"MA_Plot_Original.png", sep=""))
+plot(x$rab.all, x$diff.btw, xlab=expression( "Median" ~~ Log[2] ~~ "relative abundance" ), ylab=expression( "Median" ~~ Log[2] ~~ "btw-Condition diff" ), col=all.col, pch=all.pch, cex=all.cex)
+points(x$rab.all[x$rab.all < rare], x$diff.btw[x$rab.all < rare], col=rare.col, pch=rare.pch, cex=rare.cex)
+points(x$rab.all[ogcalled], x$diff.btw[ogcalled],  col=called.col, pch=called.pch, cex=called.cex)
+dev.off()
+
+
+
+
 
 
 # Difference Between, Difference Within, Effects
