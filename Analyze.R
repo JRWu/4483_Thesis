@@ -17,7 +17,7 @@
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with aggregate_counts.R.  If not, see <http://www.gnu.org/licenses/>.
+# along with Analyze.R.  If not, see <http://www.gnu.org/licenses/>.
 #
 # Expected Input Format:
 # READS:
@@ -88,14 +88,14 @@ for (i in 1:ncol(reads))
 reads <- as.data.frame(reads)
 
 # Aldex with Zero removal on READS
-x.clr.z <- aldex.clr(reads,conds,128, TRUE, TRUE, TRUE)
+x.clr.z <- aldex.clr(reads,conds,16, TRUE, TRUE, TRUE)
 x.e.z <- aldex.effect(x.clr.z, conds, useMC=TRUE) 
 x.t.z <- aldex.ttest(x.clr.z, conds)
 x.all.z <- data.frame(x.e.z, x.t.z)
 
 
 # Aldex with NONZERO removal on READS (original)
-x.clr.o <- aldex.clr(reads,conds,128, FALSE, TRUE, TRUE)
+x.clr.o <- aldex.clr(reads,conds,16, FALSE, TRUE, TRUE)
 x.e.o <- aldex.effect(x.clr.o, conds, useMC=TRUE) 
 x.t.o  <- aldex.ttest(x.clr.o, conds)
 x.all.o <- data.frame(x.e.o, x.t.o)
@@ -161,16 +161,16 @@ called <- x$we.eBH <= cutoff
 ogcalled <- called
 og.called <- as.data.frame(called)
 og.names <- which(og.called$called == TRUE)
-og.names <- as.data.frame(og.names)
 og.ncalled <- length(og.names)
+og.names <- as.data.frame(og.names)
 
 x <- x.all.z
 called <- x$we.eBH <= cutoff
 zrcalled <- called
 zr.called <- as.data.frame(called)
 zr.names <- which(zr.called$called == TRUE)
-zr.names <- as.data.frame(zr.names)
 zr.ncalled <- length(zr.names)
+zr.names <- as.data.frame(zr.names)
 
 zo.diff <-setdiff(og.names[,1],zr.names[,1])	# Contains the different values 
 
@@ -205,6 +205,7 @@ png (paste(created.dir,"MA_Plot_Zero.png", sep=""))
 plot(x$rab.all, x$diff.btw, xlab=expression( "Median" ~~ Log[2] ~~ "relative abundance" ), ylab=expression( "Median" ~~ Log[2] ~~ "btw-Condition diff" ), col=all.col, pch=all.pch, cex=all.cex)
 points(x$rab.all[x$rab.all < rare], x$diff.btw[x$rab.all < rare], col=rare.col, pch=rare.pch, cex=rare.cex)
 points(x$rab.all[zrcalled], x$diff.btw[zrcalled],  col=called.col, pch=called.pch, cex=called.cex)
+abline(0,0)
 dev.off()
 
 # MA Plots ORIGINAL
@@ -213,6 +214,7 @@ png (paste(created.dir,"MA_Plot_Original.png", sep=""))
 plot(x$rab.all, x$diff.btw, xlab=expression( "Median" ~~ Log[2] ~~ "relative abundance" ), ylab=expression( "Median" ~~ Log[2] ~~ "btw-Condition diff" ), col=all.col, pch=all.pch, cex=all.cex)
 points(x$rab.all[x$rab.all < rare], x$diff.btw[x$rab.all < rare], col=rare.col, pch=rare.pch, cex=rare.cex)
 points(x$rab.all[ogcalled], x$diff.btw[ogcalled],  col=called.col, pch=called.pch, cex=called.cex)
+abline(0,0)
 dev.off()
 
 

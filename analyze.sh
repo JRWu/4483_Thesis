@@ -15,7 +15,6 @@
 	# This allows for generation of graphs and etc to determine differences  
 	# Displays the histograms and various data 
 	
-	
 #R CMD BATCH ../simulate_data.R
 Rscript --vanilla Analyze.R reads # replace reads.txt with your filename
 Rscript --vanilla Analyze.R reads_A_500_0
@@ -34,3 +33,7 @@ Rscript --vanilla Analyze.R reads_AB_500_ALT
 ./mapping_script.sh
 R CMD BATCH aggregate_counts.R
 R CMD BATCH Analyze.R 
+
+# Some magic with saving the geometric means happens here
+
+Rscript --vanilla plot_strips.R
