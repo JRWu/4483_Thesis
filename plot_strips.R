@@ -30,6 +30,10 @@ onom <- "sample_gmeans_orig.txt"
 mpdf <- "stripchart_mean.pdf"
 ipdf <- "stripchart_instance.pdf"
 
+dname <- "GMean_density.png"
+
+
+
 # Iterate and plot stripchart of each dataset
 for (i in 1:8)
 {
@@ -38,6 +42,8 @@ for (i in 1:8)
 
 	pdfm <- paste(ald.name,nom[i],fg,mpdf,sep="")
 	pdfi <- paste(ald.name,nom[i],fg,ipdf,sep="")
+
+	pngz <- paste(ald.name,nom[i],fg,dname,sep="")
 
 	# Set the name of the analysis
 	manlbl=paste(nom[i]," ", sep="")
@@ -86,6 +92,38 @@ for (i in 1:8)
 	stripchart(zgmeans,method="jitter",jitter=2,xlim=c(ymax,ymin), col=c(rgb(0,0,1,0.4)), pch=15, xlab=("Geometric Mean G(x)"), ylab=("Sample"),main=paste(manlbl,"Instance", sep=""))	# Blue is zero removed
 stripchart(ogmeans,method="jitter",jitter=2,add=TRUE,col=c(rgb(1,0,0,0.4)),pch=15)	# Red is original
 	dev.off()
+	
+	density.A.z <- NULL
+	density.B.z <- NULL
+	density.A.o <- NULL
+	density.B.o <- NULL
+	
+	for (k in 1:10)
+	{
+		density.A.z <- c(density.A.z, zgmeans[,k])
+		density.A.o <- c(density.A.o, ogmeans[,k])
+	}
+	for (k in 11:20)
+	{
+		density.B.z <- c(density.B.z, zgmeans[,k])
+		density.B.o <- c(density.B.o, ogmeans[,k])
+	}
+	density.A.z <- density(density.A.z)
+	density.B.z <- density(density.B.z)
+	
+	density.A.o <- density(density.A.o)
+	density.B.o <- density(density.B.o)
+	
+	xmx <- max(density.A.z$y, density.B.z$y, density.A.o$y, density.B.o$y)
+	xmn <- 0
+	thickn <- 2
+	png(pngz, width=4,height=4,units="in",res=150)
+	plot (density.A.z,xlim=c(ymax,ymin), ylim=c(xmn,xmx), col="Blue", main=paste(manlbl, "Density", sep=" "), lwd=thickn, xlab="Geometric Mean G(x)", xaxp=c(round(ymax,2),round(ymin,2),10))
+	lines(density.B.z, col="Blue", lwd=thickn)
+	lines(density.A.o, col="Red", lwd=thickn)
+	lines(density.B.o, col="Red", lwd=thickn)
+	dev.off()
+	
 }
 
 
