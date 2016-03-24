@@ -88,14 +88,14 @@ for (i in 1:ncol(reads))
 reads <- as.data.frame(reads)
 
 # Aldex with Zero removal on READS
-x.clr.z <- aldex.clr(reads,conds,16, TRUE, TRUE, TRUE)
+x.clr.z <- aldex.clr(reads,conds,128, TRUE, TRUE, TRUE)
 x.e.z <- aldex.effect(x.clr.z, conds, useMC=TRUE) 
 x.t.z <- aldex.ttest(x.clr.z, conds)
 x.all.z <- data.frame(x.e.z, x.t.z)
 
 
 # Aldex with NONZERO removal on READS (original)
-x.clr.o <- aldex.clr(reads,conds,16, FALSE, TRUE, TRUE)
+x.clr.o <- aldex.clr(reads,conds,128, FALSE, TRUE, TRUE)
 x.e.o <- aldex.effect(x.clr.o, conds, useMC=TRUE) 
 x.t.o  <- aldex.ttest(x.clr.o, conds)
 x.all.o <- data.frame(x.e.o, x.t.o)
@@ -178,7 +178,7 @@ zo.diff <-setdiff(og.names[,1],zr.names[,1])	# Contains the different values
 x <- x.all.z
 png(paste(created.dir,"ALDEx2_1_SIMULATED.png",sep=""),width=800, height=800,res=150)
 
-plot(x$diff.win, x$diff.btw, xlab=xlab, ylab=ylab, col=all.col, pch=all.pch, cex=all.cex, main="ALDEx2.1", cex.main=2.0)
+plot(x$diff.win, x$diff.btw, xlab=expression( "Median" ~~ Log[2] ~~ "win-Condition diff" ), ylab=expression( "Median" ~~ Log[2] ~~ "btw-Condition diff" ), col=all.col, pch=all.pch, cex=all.cex, main="ALDEx2z", cex.main=2.0)
 points(x$diff.win[x$rab.all < rare], x$diff.btw[x$rab.all < rare], col=rare.col, pch=rare.pch, cex=rare.cex)
 points(x$diff.win[called], x$diff.btw[called], col=called.col, pch=called.pch, cex=called.cex)
 abline(0,1, col=thres.line.col, lty=2, lwd=thres.lwd)
@@ -190,7 +190,7 @@ dev.off()
 x <- x.all.o
 called <- x$we.eBH <= cutoff	# Reset called value
 png(paste(created.dir,"ALDEx2_0_SIMULATED.png",sep=""),width=800, height=800,res=150)
-plot(x$diff.win, x$diff.btw, xlab=xlab, ylab=ylab, col=all.col, pch=all.pch, cex=all.cex, main="ALDEx2.0", cex.main=2.0)
+plot(x$diff.win, x$diff.btw, xlab=expression( "Median" ~~ Log[2] ~~ "win-Condition diff" ), ylab=expression( "Median" ~~ Log[2] ~~ "btw-Condition diff" ), col=all.col, pch=all.pch, cex=all.cex, main="ALDEx2", cex.main=2.0)
 points(x$diff.win[x$rab.all < rare], x$diff.btw[x$rab.all < rare], col=rare.col, pch=rare.pch, cex=rare.cex)
 points(x$diff.win[called], x$diff.btw[called], col=called.col, pch=called.pch, cex=called.cex)
 abline(0,1, col=thres.line.col, lty=2, lwd=thres.lwd)
@@ -202,7 +202,7 @@ dev.off()
 # MA Plots ZERO
 x <- x.all.z
 png (paste(created.dir,"MA_Plot_Zero.png", sep=""))
-plot(x$rab.all, x$diff.btw, xlab=expression( "Median" ~~ Log[2] ~~ "relative abundance" ), ylab=expression( "Median" ~~ Log[2] ~~ "btw-Condition diff" ), col=all.col, pch=all.pch, cex=all.cex)
+plot(x$rab.all, x$diff.btw, xlab=expression( "Median" ~~ Log[2] ~~ "relative abundance" ), ylab=expression( "Median" ~~ Log[2] ~~ "btw-Condition diff" ), col=all.col, pch=all.pch, cex=all.cex, main="ALDEx2z", cex.main=2.0)
 points(x$rab.all[x$rab.all < rare], x$diff.btw[x$rab.all < rare], col=rare.col, pch=rare.pch, cex=rare.cex)
 points(x$rab.all[zrcalled], x$diff.btw[zrcalled],  col=called.col, pch=called.pch, cex=called.cex)
 abline(0,0)
@@ -211,7 +211,7 @@ dev.off()
 # MA Plots ORIGINAL
 x <- x.all.o
 png (paste(created.dir,"MA_Plot_Original.png", sep=""))
-plot(x$rab.all, x$diff.btw, xlab=expression( "Median" ~~ Log[2] ~~ "relative abundance" ), ylab=expression( "Median" ~~ Log[2] ~~ "btw-Condition diff" ), col=all.col, pch=all.pch, cex=all.cex)
+plot(x$rab.all, x$diff.btw, xlab=expression( "Median" ~~ Log[2] ~~ "relative abundance" ), ylab=expression( "Median" ~~ Log[2] ~~ "btw-Condition diff" ), col=all.col, pch=all.pch, cex=all.cex, main="ALDEx2", cex.main=2.0)
 points(x$rab.all[x$rab.all < rare], x$diff.btw[x$rab.all < rare], col=rare.col, pch=rare.pch, cex=rare.cex)
 points(x$rab.all[ogcalled], x$diff.btw[ogcalled],  col=called.col, pch=called.pch, cex=called.cex)
 abline(0,0)

@@ -23,6 +23,9 @@
 # Set the labels for reading in 
 ald.name <- ("../aldex_analysis/")
 nom <- c("reads_A_500_0","reads_A_500_ALT","reads_A_500_MIN","reads_AB_500_ALT","reads_B_500_0","reads_B_500_ALT","reads_B_500_MIN","reads")
+
+txt <- ".txt"
+
 fg <- "_figures/"
 znom <- "sample_gmeans_zero.txt"
 onom <- "sample_gmeans_orig.txt"
@@ -31,6 +34,8 @@ mpdf <- "stripchart_mean.pdf"
 ipdf <- "stripchart_instance.pdf"
 
 dname <- "GMean_density.png"
+exname <- "Exponentiated_density.png"
+
 
 
 
@@ -44,14 +49,23 @@ for (i in 1:8)
 	pdfi <- paste(ald.name,nom[i],fg,ipdf,sep="")
 
 	pngz <- paste(ald.name,nom[i],fg,dname,sep="")
+	pngex <- paste(ald.name,nom[i],fg,exname,sep="")
+	flnam <- paste(ald.name,nom[i],txt, sep="")
 
+	rdtbl <- read.table(flnam, header=T, row.names=1)
+
+	readsums <- colSums(rdtbl)
+	readsums <- as.numeric(readsums)	
+	
 	# Set the name of the analysis
-	manlbl=paste(nom[i]," ", sep="")
+	manlbl <- paste(nom[i]," ", sep="")
 
 	#Read Tables		
 	zgmeans <- read.table(finz, header=T, row.names=1, sep="\t")	
 	ogmeans <- read.table(fino, header=T, row.names=1, sep="\t")
+	
 
+	
 	# Transpose tables and get the average geometric mean per sample
 	zgmeans.mean <- t(as.data.frame(colMeans(zgmeans)))
 	ogmeans.mean <- t(as.data.frame(colMeans(ogmeans)))
@@ -98,32 +112,82 @@ stripchart(ogmeans,method="jitter",jitter=2,add=TRUE,col=c(rgb(1,0,0,0.4)),pch=1
 	density.A.o <- NULL
 	density.B.o <- NULL
 	
+		
+	# Exponentiated Data for Geometric Mean
+	exp.density.A.z <- NULL
+	exp.density.B.z <- NULL
+	exp.density.A.o <- NULL
+	exp.density.B.o <- NULL
+	
+	
+	exp.zgmeans <- 2^(zgmeans)
+	exp.ogmeans <- 2^(ogmeans)
+	
+	exp.samp.sums.z <- apply(exp.zgmeans,2,sum)
+	exp.samp.sums.o <- apply(exp.ogmeans,2,sum)
+	
 	for (k in 1:10)
 	{
 		density.A.z <- c(density.A.z, zgmeans[,k])
 		density.A.o <- c(density.A.o, ogmeans[,k])
+		
+		exp.zgmeans[,k] <- (exp.zgmeans[,k] * readsums[k])
+		exp.ogmeans[,k] <- (exp.ogmeans[,k] * readsums[k])
+		exp.density.A.z <- c(exp.density.A.z, exp.zgmeans[,k])
+		exp.density.A.o <- c(exp.density.A.o, exp.ogmeans[,k])
+		
 	}
 	for (k in 11:20)
 	{
 		density.B.z <- c(density.B.z, zgmeans[,k])
 		density.B.o <- c(density.B.o, ogmeans[,k])
+		
+		exp.zgmeans[,k] <- (exp.zgmeans[,k] * readsums[k])
+		exp.ogmeans[,k] <- (exp.ogmeans[,k] * readsums[k])
+		exp.density.B.z <- c(exp.density.B.z, exp.zgmeans[,k])
+		exp.density.B.o <- c(exp.density.B.o, exp.ogmeans[,k])		
+		
 	}
 	density.A.z <- density(density.A.z)
-	density.B.z <- density(density.B.z)
-	
+	density.B.z <- density(density.B.z)	
 	density.A.o <- density(density.A.o)
 	density.B.o <- density(density.B.o)
+	
+	exp.density.A.z <- density(exp.density.A.z)
+	exp.density.B.z <- density(exp.density.B.z)
+	exp.density.A.o <- density(exp.density.A.o)
+	exp.density.B.o <- density(exp.density.B.o)
+	
+	
+	geolab <- expression(Log[2] ~~"Geometric Mean")
 	
 	xmx <- max(density.A.z$y, density.B.z$y, density.A.o$y, density.B.o$y)
 	xmn <- 0
 	thickn <- 2
 	png(pngz, width=4,height=4,units="in",res=150)
-	plot (density.A.z,xlim=c(ymax,ymin), ylim=c(xmn,xmx), col="Blue", main=paste(manlbl, "Density", sep=" "), lwd=thickn, xlab="Geometric Mean G(x)", xaxp=c(round(ymax,2),round(ymin,2),10))
+	plot (density.A.z,xlim=c(ymin,ymax), ylim=c(xmn,xmx), col="Blue", main=paste(manlbl, "Density", sep=" "), lwd=thickn, xlab=geolab, xaxp=c(round(ymax,2),round(ymin,2),10))
 	lines(density.B.z, col="Blue", lwd=thickn)
 	lines(density.A.o, col="Red", lwd=thickn)
 	lines(density.B.o, col="Red", lwd=thickn)
 	dev.off()
 	
+	
+	exmx <- max(exp.density.A.z$y, exp.density.B.z$y, exp.density.A.o$y, exp.density.B.o$y)
+	
+	exp.ymax <- max(exp.zgmeans,exp.ogmeans)	# Positive
+	exp.ymin <- min(exp.zgmeans,exp.ogmeans)	# Negative
+
+	
+	png(pngex, width=4,height=4,units="in",res=150)
+	
+	
+	plot (exp.density.A.z,xlim=c(exp.ymin,exp.ymax),ylim=c(0,1), col="Blue", main=paste(manlbl, "Density", sep=" "), lwd=thickn, xlab="Sample Mean")
+	lines(exp.density.B.z, col="Blue", lwd=thickn)
+	lines(exp.density.A.o, col="Red", lwd=thickn)
+	lines(exp.density.B.o, col="Red", lwd=thickn)
+	
+	
+	dev.off()
 }
 
 
